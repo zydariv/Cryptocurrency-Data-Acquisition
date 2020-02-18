@@ -9,9 +9,9 @@ import os
 import time
 import sys
 
-
+hour_ = None
 # minimum = 2
-every_n_minutes = 60#60
+every_n_minutes = 60
 first_state = True
 API_KEY = ''
 currencies = None
@@ -39,7 +39,6 @@ def fetch_data():
     jsons = []
 
     for curr in currencies:
-        #LINK = f'https://min-api.cryptocompare.com/data/v2/histominute?fsym={curr}&tsym=EUR'
         LINK = f'https://min-api.cryptocompare.com/data/v2/histominute?fsym={curr}&tsym=EUR&limit={every_n_minutes-1}'
         headers = {'Authorization': 'Token' + API_KEY}
 
@@ -57,17 +56,18 @@ def fetch_data():
         else:
             df_.to_csv(f'data/{currencies[idx]}.csv', mode='a', header=False)
     first_state = False
-    telegram_bot_sendtext(time.strftime('%H:%M:%S   %d. %b %Y'))
+    telegram_bot_sendtext(time.strftime('%H:%M:%S %d. %b %Y'))
 
 
 # Always run before new instance
 schedule.clear()
+schedule.every().hour.at(':00').do(fetch_data)
 
-# schedule.every().day.at("00:00").do(fetch_data)
-s = schedule.every(60*every_n_minutes).seconds.do(fetch_data)
+# Not stable
+# s = schedule.every(60*every_n_minutes).seconds.do(fetch_data)
 try:
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        time.sleep(0.5)
 except Exception as e:
     telegram_bot_sendtext('FAILED: ' + str(sys.exc_info()[1]))
