@@ -11,7 +11,7 @@ import sys
 
 
 # minimum = 2
-every_n_minutes = 2#60
+every_n_minutes = 60#60
 first_state = True
 API_KEY = ''
 currencies = None
