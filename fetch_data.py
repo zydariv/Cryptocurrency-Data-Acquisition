@@ -5,6 +5,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import schedule
 import time
+import os
 
 
 # minimum = 2
@@ -18,6 +19,11 @@ with open('config.json', 'r') as f:
     currencies = j['currencies']
     bot_token = j['bot_token']
     bot_chatID = j['bot_chatID']
+
+
+if not os.path.exists('data'):
+    os.makedirs('data')
+
 
 def telegram_bot_sendtext(bot_message):
     send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
