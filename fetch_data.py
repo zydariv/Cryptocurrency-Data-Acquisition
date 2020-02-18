@@ -6,10 +6,12 @@ from matplotlib import pyplot as plt
 import schedule
 import time
 import os
+import time
+import sys
 
 
 # minimum = 2
-every_n_minutes = 3
+every_n_minutes = 2#60
 first_state = True
 API_KEY = ''
 currencies = None
@@ -55,7 +57,7 @@ def fetch_data():
         else:
             df_.to_csv(f'data/{currencies[idx]}.csv', mode='a', header=False)
     first_state = False
-    telegram_bot_sendtext(str(df_['time']))
+    telegram_bot_sendtext(time.strftime('%H:%M:%S   %d. %b %Y'))
 
 
 # Always run before new instance
@@ -63,7 +65,9 @@ schedule.clear()
 
 # schedule.every().day.at("00:00").do(fetch_data)
 s = schedule.every(60*every_n_minutes).seconds.do(fetch_data)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+try:
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+except Exception as e:
+    telegram_bot_sendtext('FAILED: ' + str(sys.exc_info()[1]))
